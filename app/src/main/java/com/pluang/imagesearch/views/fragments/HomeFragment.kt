@@ -37,7 +37,7 @@ class HomeFragment : Fragment() {
 
     private fun subscribeQuery() {
         lifecycleScope.launch {
-            val result = imageViewModel.getImages()
+            val result = imageViewModel.getImages(query = "Apple")
             result.collect {
                 when (it) {
                     is Resource.Success -> {
