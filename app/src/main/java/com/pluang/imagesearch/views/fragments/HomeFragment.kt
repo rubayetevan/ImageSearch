@@ -27,17 +27,21 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding.imageViewModel = imageViewModel
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        subscribeQuery()
+        binding.button.setOnClickListener {
+            Log.d("handleUiState", "binding.button.setOnClickListener-> ${imageViewModel.queryText}")
+        }
+
     }
 
     private fun subscribeQuery() {
         lifecycleScope.launch {
-            val result = imageViewModel.getImages(query = "Apple")
+            val result = imageViewModel.getImages()
             result.collect {
                 when (it) {
                     is Resource.Success -> {

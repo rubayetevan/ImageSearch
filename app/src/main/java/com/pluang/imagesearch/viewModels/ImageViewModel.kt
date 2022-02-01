@@ -11,8 +11,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ImageViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
+    var queryText = ""
 
-    suspend fun getImages(query: String = "", page: Int = 1, perPage: Int = 10): Flow<Resource<ImageModel>> =
-        repository.getImages(page = page, query = query, perPage = perPage)
+    suspend fun getImages(page: Int = 1, perPage: Int = 10): Flow<Resource<ImageModel>> =
+        repository.getImages(page = page, query = queryText, perPage = perPage)
 
 }
