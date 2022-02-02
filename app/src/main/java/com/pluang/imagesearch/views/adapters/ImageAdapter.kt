@@ -72,7 +72,7 @@ class ImageAdapter(private val context: Context) : RecyclerView.Adapter<Recycler
             .load(url)
             .into(imageViewHolder.binding.imageView)
         imageViewHolder.itemView.setOnClickListener { view ->
-            val bundle = bundleOf("url" to url)
+            val bundle = bundleOf("url" to data[position].urls.regular)
             val extras = FragmentNavigatorExtras(imageViewHolder.binding.imageView to id)
             view.findNavController().navigate(R.id.action_homeFragment_to_detailsFragment, bundle, null, extras)
         }

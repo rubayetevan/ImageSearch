@@ -15,7 +15,7 @@ class ImageViewModel @Inject constructor(private val repository: Repository) : V
 
     var fragmentHomeBinding: FragmentHomeBinding? = null
 
-    var queryText = "apple"
+    var queryText = "Indonesia"
     var currentPageNumber = 1
     var totalPages = 0
     var isLoading = false

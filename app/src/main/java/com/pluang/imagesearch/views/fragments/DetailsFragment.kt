@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
+import com.pluang.imagesearch.R
 import com.pluang.imagesearch.databinding.FragmentDetailsBinding
 import com.pluang.imagesearch.viewModels.ImageViewModel
 import com.squareup.picasso.Picasso
@@ -48,6 +49,7 @@ class DetailsFragment : Fragment() {
         val url = arguments?.getString("url")
         Picasso.get()
             .load(url)
+            .placeholder(R.drawable.ic_baseline_downloading_24)
             .into(binding.imageView)
     }
 
