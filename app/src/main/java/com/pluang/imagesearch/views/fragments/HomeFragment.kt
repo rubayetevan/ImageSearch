@@ -2,14 +2,18 @@ package com.pluang.imagesearch.views.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.TransitionInflater
 import com.pluang.imagesearch.R
 import com.pluang.imagesearch.common.utility.Resource
 import com.pluang.imagesearch.databinding.FragmentHomeBinding
@@ -25,18 +29,28 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val imageViewModel: ImageViewModel by activityViewModels<ImageViewModel>()
-    private lateinit var imageAdapter : ImageAdapter
+    private lateinit var imageAdapter: ImageAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        binding.imageViewModel = imageViewModel
-        setHasOptionsMenu(true)
-        imageAdapter = ImageAdapter(requireContext())
+        if (imageViewModel.fragmentHomeBinding == null) {
+            imageViewModel.fragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
+            _binding = imageViewModel.fragmentHomeBinding
+            binding.imageViewModel = imageViewModel
+            imageAdapter = ImageAdapter(requireContext())
+        }
+        _binding = imageViewModel.fragmentHomeBinding
+        sharedElementReturnTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.explode)
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,16 +61,10 @@ class HomeFragment : Fragment() {
 
 
         binding.imageRV.apply {
-            val onSpanSizeLookup: SpanSizeLookup = object : SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return imageAdapter.gridSize
-                }
-            }
-            val gridLayoutManager = GridLayoutManager(context,4)
-            gridLayoutManager.spanSizeLookup = onSpanSizeLookup
+            val gridLayoutManager = GridLayoutManager(context, imageAdapter.gridSize)
             layoutManager = gridLayoutManager
             adapter = imageAdapter
-
+            setHasFixedSize(true)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
@@ -76,27 +84,31 @@ class HomeFragment : Fragment() {
                 }
             })
         }
+        postponeEnterTransition()
+        binding.imageRV.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
 
         subscribeQuery()
 
         binding.button.setOnClickListener {
-            imageViewModel.totalPages =0
+            imageViewModel.totalPages = 0
             imageViewModel.isLoading = false
-            imageViewModel.currentPageNumber =1
+            imageViewModel.currentPageNumber = 1
             imageAdapter.clearData()
             subscribeQuery()
         }
     }
 
-    private fun subscribeQuery(page :Int =1) {
+    private fun subscribeQuery(page: Int = 1) {
         lifecycleScope.launch {
             val result = imageViewModel.getImages(page = page)
             result.collect {
                 when (it) {
                     is Resource.Success -> {
                         Log.d("handleUiState", "Resource.Success-> " + it.data.toString())
-                        imageViewModel.totalPages = it.data?.total_pages?:0
-                        it.data?.results?.let {results->
+                        imageViewModel.totalPages = it.data?.total_pages ?: 0
+                        it.data?.results?.let { results ->
                             imageAdapter.addData(results)
                         }
                         imageViewModel.isLoading = false
@@ -119,11 +131,10 @@ class HomeFragment : Fragment() {
         imageViewModel.currentPageNumber += 1
         if (imageViewModel.currentPageNumber <= imageViewModel.totalPages) {
             subscribeQuery(imageViewModel.currentPageNumber)
-            imageAdapter.isLastPage =false
-            //Log.d("loadMore","loading ${pageNumber}/${jobsAdapter.getTotalPage}")
-        }else{
-            imageAdapter.isLastPage =true
-            imageAdapter.notifyItemChanged(imageAdapter.getCurrentDataSize-1)
+            imageAdapter.isLastPage = false
+        } else {
+            imageAdapter.isLastPage = true
+            imageAdapter.notifyItemChanged(imageAdapter.getCurrentDataSize - 1)
         }
     }
 
@@ -138,16 +149,18 @@ class HomeFragment : Fragment() {
                 true
             }
             R.id.menu_item_four -> {
-               changeGridSize(4)
+                changeGridSize(4)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun changeGridSize(gridSize:Int){
+    private fun changeGridSize(gridSize: Int) {
         imageAdapter.gridSize = gridSize
-        imageAdapter.notifyDataSetChanged()
+        val gridLayoutManager = GridLayoutManager(context, gridSize)
+        binding.imageRV.layoutManager = gridLayoutManager
+        imageAdapter.notifyItemChanged(imageAdapter.getCurrentDataSize / 2)
 
     }
 

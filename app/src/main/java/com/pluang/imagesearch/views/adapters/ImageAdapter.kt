@@ -3,11 +3,16 @@ package com.pluang.imagesearch.views.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
+import com.pluang.imagesearch.R
 import com.pluang.imagesearch.common.utility.physicalScreenRectPx
 import com.pluang.imagesearch.databinding.ItemImageBinding
 import com.pluang.imagesearch.databinding.ItemImageLoadingBinding
 import com.pluang.imagesearch.models.Result
+import com.pluang.imagesearch.views.fragments.HomeFragmentDirections
 import com.squareup.picasso.Picasso
 
 
@@ -50,27 +55,35 @@ class ImageAdapter(private val context: Context) : RecyclerView.Adapter<Recycler
             is ImageViewHolder -> {
                 populateData(holder, position)
             }
-            is LoadingViewHolder ->{
-                populateData(holder,position)
+            is LoadingViewHolder -> {
+                populateData(holder, position)
             }
         }
     }
 
-    private fun populateData(imageViewHolder:ImageViewHolder, position: Int) {
+    private fun populateData(imageViewHolder: ImageViewHolder, position: Int) {
         val physicalWidthPx = context.physicalScreenRectPx.width()
         //val physicalHeightPx = context.physicalScreenRectPx.height()
-        imageViewHolder.binding.imageView.layoutParams.width = physicalWidthPx/gridSize
+        imageViewHolder.binding.imageView.layoutParams.width = physicalWidthPx / gridSize
+        val url = data[position].urls.thumb
+        val id = data[position].id
+        imageViewHolder.binding.imageView.transitionName = id
         Picasso.get()
-            .load(data[position].urls.thumb)
+            .load(url)
             .into(imageViewHolder.binding.imageView)
+        imageViewHolder.itemView.setOnClickListener { view ->
+            val bundle = bundleOf("url" to url)
+            val extras = FragmentNavigatorExtras(imageViewHolder.binding.imageView to id)
+            view.findNavController().navigate(R.id.action_homeFragment_to_detailsFragment, bundle, null, extras)
+        }
     }
 
-    private fun populateData(imageViewHolder:LoadingViewHolder, position: Int) {
+    private fun populateData(imageViewHolder: LoadingViewHolder, position: Int) {
 
     }
 
     override fun getItemCount(): Int {
-        return  data.size
+        return data.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -85,7 +98,8 @@ class ImageAdapter(private val context: Context) : RecyclerView.Adapter<Recycler
         }
         notifyItemInserted(lastPosition)
     }
-    fun clearData(){
+
+    fun clearData() {
         data.clear()
         notifyDataSetChanged()
     }
