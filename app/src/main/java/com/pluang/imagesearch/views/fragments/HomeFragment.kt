@@ -25,7 +25,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val imageViewModel: ImageViewModel by activityViewModels<ImageViewModel>()
-    private val imageAdapter = ImageAdapter()
+    private lateinit var imageAdapter : ImageAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +35,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.imageViewModel = imageViewModel
         setHasOptionsMenu(true)
+        imageAdapter = ImageAdapter(requireContext())
         return binding.root
     }
 
@@ -48,7 +49,7 @@ class HomeFragment : Fragment() {
         binding.imageRV.apply {
             val onSpanSizeLookup: SpanSizeLookup = object : SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return imageViewModel.gridSize
+                    return imageAdapter.gridSize
                 }
             }
             val gridLayoutManager = GridLayoutManager(context,4)
@@ -145,8 +146,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun changeGridSize(gridSize:Int){
-        imageViewModel.gridSize =gridSize
-        imageAdapter.notifyItemChanged(imageAdapter.getCurrentDataSize-1)
+        imageAdapter.gridSize = gridSize
+        imageAdapter.notifyDataSetChanged()
+
     }
 
 

@@ -14,7 +14,6 @@ class ImageViewModel @Inject constructor(private val repository: Repository) : V
     var queryText = "car"
     var currentPageNumber = 1
     var totalPages = 0
-    var gridSize = 2
     var isLoading = false
 
     suspend fun getImages(page: Int = 1, perPage: Int = 10): Flow<Resource<ImageModel>> =

@@ -1,15 +1,17 @@
 package com.pluang.imagesearch.views.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.pluang.imagesearch.common.utility.physicalScreenRectPx
 import com.pluang.imagesearch.databinding.ItemImageBinding
 import com.pluang.imagesearch.databinding.ItemImageLoadingBinding
 import com.pluang.imagesearch.models.Result
 import com.squareup.picasso.Picasso
 
 
-class ImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ImageAdapter(private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
@@ -17,6 +19,7 @@ class ImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val data: ArrayList<Result> = ArrayList<Result>()
     val getCurrentDataSize get() = data.size
     var isLastPage = false
+    var gridSize = 2
 
 
     private inner class ImageViewHolder(val binding: ItemImageBinding) : RecyclerView.ViewHolder(binding.root)
@@ -54,6 +57,9 @@ class ImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private fun populateData(imageViewHolder:ImageViewHolder, position: Int) {
+        val physicalWidthPx = context.physicalScreenRectPx.width()
+        //val physicalHeightPx = context.physicalScreenRectPx.height()
+        imageViewHolder.binding.imageView.layoutParams.width = physicalWidthPx/gridSize
         Picasso.get()
             .load(data[position].urls.thumb)
             .into(imageViewHolder.binding.imageView)
