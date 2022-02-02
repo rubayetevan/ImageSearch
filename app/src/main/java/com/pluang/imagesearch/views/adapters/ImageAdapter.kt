@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pluang.imagesearch.databinding.ItemImageBinding
 import com.pluang.imagesearch.databinding.ItemImageLoadingBinding
 import com.pluang.imagesearch.models.Result
-import com.pluang.imagesearch.models.Urls
 import com.squareup.picasso.Picasso
+
 
 class ImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
