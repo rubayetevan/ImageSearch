@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">ImageSearch</string>
+    <string name="app_name">Image Search</string>
+    <string name="home">Home</string>
+    <string name="details">Details</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="empty_message">No Images Found!</string>
+    <string name="search">Search</string>
 </resources>
