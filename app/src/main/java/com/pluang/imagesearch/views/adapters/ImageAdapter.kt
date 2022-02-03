@@ -47,7 +47,6 @@ class ImageAdapter(private val context: Context) : RecyclerView.Adapter<Recycler
         val physicalWidthPx = context.physicalScreenRectPx.width()
         //val physicalHeightPx = context.physicalScreenRectPx.height()
         imageViewHolder.binding.imageView.layoutParams.width = physicalWidthPx / gridSize
-        val url = data[position].urls.small
         val id = data[position].id
         imageViewHolder.binding.imageView.transitionName = id
         Glide.with(context)
