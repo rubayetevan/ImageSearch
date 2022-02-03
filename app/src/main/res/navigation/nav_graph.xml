@@ -7,11 +7,17 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.pluang.imagesearch.views.fragments.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="@string/home" >
+        <action
+            app:popUpToInclusive="false"
+            app:popUpTo="@id/homeFragment"
+            android:id="@+id/action_homeFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.pluang.imagesearch.views.fragments.DetailsFragment"
-        android:label="DetailsFragment" >
+        android:label="@string/details" >
         <action
             android:id="@+id/action_detailsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
