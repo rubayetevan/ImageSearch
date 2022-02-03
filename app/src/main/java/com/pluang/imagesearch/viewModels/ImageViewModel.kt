@@ -14,12 +14,11 @@ import javax.inject.Inject
 class ImageViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     var fragmentHomeBinding: FragmentHomeBinding? = null
-
     var queryText = "Indonesia"
     var currentPageNumber = 1
     var totalPages = 0
     var isLoading = false
-    var hasInternet = false
+    var hasInternet = true
 
     suspend fun getImages(page: Int = 1, perPage: Int = 10): Flow<Resource<ImageModel>> =
         repository.getImages(page = page, query = queryText, perPage = perPage, hasInternet = hasInternet)

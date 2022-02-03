@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.google.android.material.snackbar.Snackbar
 import com.pluang.imagesearch.R
 import com.pluang.imagesearch.databinding.ActivityMainBinding
 import com.pluang.imagesearch.viewModels.ImageViewModel
@@ -21,10 +20,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val imageViewModel: ImageViewModel by viewModels()
+
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
-
 
 
     private val networkRequest = NetworkRequest.Builder()
@@ -56,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             imageViewModel.hasInternet = false
         }
     }
-
+    private val imageViewModel: ImageViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -67,8 +65,6 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.activity_main_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController)
-        val connectivityManager = getSystemService(ConnectivityManager::class.java)
-        connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
 
 
