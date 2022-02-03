@@ -112,15 +112,32 @@ class HomeFragment : Fragment() {
                             imageAdapter.addData(results)
                         }
                         imageViewModel.isLoading = false
+                        binding.progressBar.visibility = View.GONE
+                        binding.textView.visibility = View.GONE
+                        binding.imageRV.visibility = View.VISIBLE
                     }
                     is Resource.Loading -> {
-                        Log.d("handleUiState", "Resource.Loading-> " + it.message.toString())
+                        if (imageViewModel.currentPageNumber == 1) {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.textView.visibility = View.GONE
+                            binding.imageRV.visibility = View.GONE
+                        }
                     }
                     is Resource.Error -> {
-                        Log.d("handleUiState", "Resource.Error-> " + it.message.toString())
+                        if (imageViewModel.currentPageNumber == 1) {
+                            binding.progressBar.visibility = View.GONE
+                            binding.textView.visibility = View.VISIBLE
+                            binding.imageRV.visibility = View.GONE
+                            binding.textView.text = it.message.toString()
+                        }
                     }
                     is Resource.Empty -> {
-                        Log.d("handleUiState", "Resource.Empty-> ")
+                        if (imageViewModel.currentPageNumber == 1) {
+                            binding.progressBar.visibility = View.GONE
+                            binding.textView.visibility = View.VISIBLE
+                            binding.imageRV.visibility = View.GONE
+                            binding.textView.text = getString(R.string.empty_message)
+                        }
                     }
                 }
             }
@@ -157,7 +174,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun changeGridSize(gridSize: Int) {
-        if(imageAdapter.gridSize == gridSize)
+        if (imageAdapter.gridSize == gridSize)
             return
         imageAdapter.gridSize = gridSize
         val gridLayoutManager = GridLayoutManager(context, gridSize)

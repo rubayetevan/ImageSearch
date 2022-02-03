@@ -4,19 +4,17 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.snackbar.Snackbar
 import com.pluang.imagesearch.R
+import com.pluang.imagesearch.databinding.ActivityMainBinding
 import com.pluang.imagesearch.viewModels.ImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +23,9 @@ class MainActivity : AppCompatActivity() {
 
     private val imageViewModel: ImageViewModel by viewModels()
     private lateinit var navController: NavController
+    private lateinit var binding: ActivityMainBinding
+
+
 
     private val networkRequest = NetworkRequest.Builder()
         .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             val hasCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
             val hasWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
             imageViewModel.hasInternet = hasCellular || hasWifi
+
         }
 
         // lost network connection
@@ -57,14 +59,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.activity_main_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController)
-
+        val connectivityManager = getSystemService(ConnectivityManager::class.java)
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
+
 
     override fun onResume() {
         super.onResume()
