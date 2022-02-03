@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.activity_main_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController)
+        val connectivityManager = getSystemService(ConnectivityManager::class.java)
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
 
     override fun onResume() {
