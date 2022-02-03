@@ -14,5 +14,6 @@ data class Result(
     val sponsorship: Any,
     val updated_at: String,
     val urls: Urls,
-    val width: Int
+    val width: Int,
+    var query: String?=null
 )

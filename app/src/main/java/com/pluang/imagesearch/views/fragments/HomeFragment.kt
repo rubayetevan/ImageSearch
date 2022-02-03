@@ -157,6 +157,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun changeGridSize(gridSize: Int) {
+        if(imageAdapter.gridSize == gridSize)
+            return
         imageAdapter.gridSize = gridSize
         val gridLayoutManager = GridLayoutManager(context, gridSize)
         binding.imageRV.layoutManager = gridLayoutManager

@@ -49,7 +49,7 @@ class DetailsFragment : Fragment() {
         val url = arguments?.getString("url")
         Picasso.get()
             .load(url)
-            .placeholder(R.drawable.ic_baseline_downloading_24)
+            .placeholder(R.drawable.ic_baseline_image_24)
             .into(binding.imageView)
     }
 

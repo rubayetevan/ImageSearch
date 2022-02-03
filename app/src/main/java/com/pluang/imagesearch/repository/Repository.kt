@@ -19,12 +19,11 @@ class Repository @Inject constructor(
                 unsplashRemoteDataSource.getImages(page = page, query = query, perPage = perPage)
             }
             if (result is Resource.Success) {
-                if (result.data != null) {
+                if (result.data != null && result.data.total>0) {
                     emit(Resource.Success<ImageModel>(result.data))
                 } else {
                     emit(Resource.Empty<ImageModel>())
                 }
-
             } else if (result is Resource.Error) {
                 emit(Resource.Error<ImageModel>(result.message ?: "Error"))
             }
