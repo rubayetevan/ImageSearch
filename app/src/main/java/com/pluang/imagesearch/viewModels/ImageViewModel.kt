@@ -14,7 +14,6 @@ import javax.inject.Inject
 class ImageViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     var fragmentHomeBinding: FragmentHomeBinding? = null
-
     var queryText = "Indonesia"
     var currentPageNumber = 1
     var totalPages = 0

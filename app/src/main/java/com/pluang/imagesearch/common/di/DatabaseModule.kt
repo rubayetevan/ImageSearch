@@ -27,6 +27,6 @@ object DatabaseModule {
 
     @Provides
     fun provideChannelDao(appDatabase: AppDatabase): ResultDao {
-        return appDatabase.imageDao()
+        return appDatabase.resultDao()
     }
 }
