@@ -1,19 +1,16 @@
 package com.pluang.imagesearch.models
 
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Result(
-    val alt_description: String,
-    val blur_hash: String,
-    val color: String,
-    val created_at: String,
-    val description: String,
-    val height: Int,
-    val id: String,
-    val liked_by_user: Boolean,
-    val likes: Int,
-    val promoted_at: String,
-    val sponsorship: Any,
-    val updated_at: String,
-    val urls: Urls,
-    val width: Int,
-    var query: String?=null
+    @ColumnInfo val created_at: String,
+    @ColumnInfo val height: Int,
+    @PrimaryKey @ColumnInfo val id: String,
+    @Embedded val urls: Urls,
+    @ColumnInfo val width: Int,
+    @ColumnInfo var query: String,
 )

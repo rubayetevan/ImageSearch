@@ -1,5 +1,6 @@
 package com.pluang.imagesearch.models
 
+
 data class Urls(
     val full: String,
     val raw: String,

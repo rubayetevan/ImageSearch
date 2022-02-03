@@ -1,6 +1,7 @@
 package com.pluang.imagesearch.views.fragments
 
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,10 +10,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
+import com.bumptech.glide.Glide
 import com.pluang.imagesearch.R
+import com.pluang.imagesearch.common.utility.IMAGE_EXTENSION
 import com.pluang.imagesearch.databinding.FragmentDetailsBinding
 import com.pluang.imagesearch.viewModels.ImageViewModel
-import com.squareup.picasso.Picasso
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 
@@ -46,9 +49,9 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val url = arguments?.getString("url")
-        Picasso.get()
-            .load(url)
+        val id = arguments?.getString("id")
+        Glide.with(requireContext())
+            .load(Uri.fromFile(File("${requireContext().filesDir.absoluteFile}/$id$IMAGE_EXTENSION")))
             .placeholder(R.drawable.ic_baseline_image_24)
             .into(binding.imageView)
     }
