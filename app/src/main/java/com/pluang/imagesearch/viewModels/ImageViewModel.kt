@@ -19,8 +19,9 @@ class ImageViewModel @Inject constructor(private val repository: Repository) : V
     var currentPageNumber = 1
     var totalPages = 0
     var isLoading = false
+    var hasInternet = false
 
     suspend fun getImages(page: Int = 1, perPage: Int = 10): Flow<Resource<ImageModel>> =
-        repository.getImages(page = page, query = queryText, perPage = perPage)
+        repository.getImages(page = page, query = queryText, perPage = perPage, hasInternet = hasInternet)
 
 }

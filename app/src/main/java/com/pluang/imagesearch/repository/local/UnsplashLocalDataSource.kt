@@ -9,5 +9,7 @@ class UnsplashLocalDataSource @Inject constructor(private val  resultDao: Result
         resultDao.insertAllResults(results)
     }
 
+    suspend fun getResultsByQuery(query:String)= resultDao.getResultsByQuery(query)
+
 
 }

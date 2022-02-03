@@ -16,4 +16,7 @@ interface ResultDao {
 
     @Delete
     suspend fun deleteResult(data: Result)
+
+    @Query("SELECT * FROM result WHERE UPPER(`query`) = UPPER(:queryString)")
+    suspend fun getResultsByQuery(queryString: String):List<Result>
 }

@@ -31,7 +31,11 @@ class Repository @Inject constructor(
     private val unsplashLocalDataSource: UnsplashLocalDataSource,
     private val unsplashRemoteDataSource: UnsplashRemoteDataSource, private val externalScope: CoroutineScope
 ) {
-    suspend fun getImages(query: String = "", page: Int = 1, perPage: Int = 10): Flow<Resource<ImageModel>> {
+    suspend fun getImages(query: String = "", page: Int = 1, perPage: Int = 10, hasInternet: Boolean): Flow<Resource<ImageModel>> {
+        return if (hasInternet) getImagesFromRemoteDataSource(query, page, perPage) else getImagesFromLocalDataSource(query)
+    }
+
+    private suspend fun getImagesFromRemoteDataSource(query: String, page: Int, perPage: Int): Flow<Resource<ImageModel>> {
         return flow {
             emit(Resource.Loading<ImageModel>())
             val result = withContext(externalScope.coroutineContext) {
@@ -48,6 +52,26 @@ class Repository @Inject constructor(
                 }
             } else if (result is Resource.Error) {
                 emit(Resource.Error<ImageModel>(result.message ?: "Error"))
+            }
+        }
+    }
+
+    private suspend fun getImagesFromLocalDataSource(query: String):
+            Flow<Resource<ImageModel>> {
+        return flow {
+            emit(Resource.Loading<ImageModel>())
+            val results = withContext(externalScope.coroutineContext) {
+                unsplashLocalDataSource.getResultsByQuery(query)
+            }
+            if (results.isNotEmpty()) {
+                val imageModel = ImageModel(
+                    results = results,
+                    total = results.size,
+                    total_pages = 1
+                )
+                emit(Resource.Success<ImageModel>(imageModel))
+            } else {
+                emit(Resource.Empty<ImageModel>())
             }
         }
     }
@@ -71,11 +95,8 @@ class Repository @Inject constructor(
                             saveImage(bitmap, id)
                         }
                     }
-
                     override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
-                    override fun onLoadFailed(@Nullable errorDrawable: Drawable?) {
-                        super.onLoadFailed(errorDrawable)
-                    }
+
                 })
 
         }
@@ -84,7 +105,7 @@ class Repository @Inject constructor(
     private fun saveImage(bitmap: Bitmap, fileName: String) {
         val imageFile = File(context.filesDir, "$fileName$IMAGE_EXTENSION")
         val savedImagePath = imageFile.absolutePath
-        Log.i("saveImage",savedImagePath)
+        Log.i("saveImage", savedImagePath)
         try {
             val outputStream: OutputStream = FileOutputStream(imageFile)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
