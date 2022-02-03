@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import com.pluang.imagesearch.R
 import com.pluang.imagesearch.common.utility.Resource
+import com.pluang.imagesearch.common.utility.Validators
 import com.pluang.imagesearch.databinding.FragmentHomeBinding
 import com.pluang.imagesearch.viewModels.ImageViewModel
 import com.pluang.imagesearch.views.adapters.ImageAdapter
@@ -92,11 +94,15 @@ class HomeFragment : Fragment() {
         subscribeQuery()
 
         binding.button.setOnClickListener {
-            imageViewModel.totalPages = 0
-            imageViewModel.isLoading = false
-            imageViewModel.currentPageNumber = 1
-            imageAdapter.clearData()
-            subscribeQuery()
+            if(Validators.validateSearchQuery(imageViewModel.queryText)) {
+                imageViewModel.totalPages = 0
+                imageViewModel.isLoading = false
+                imageViewModel.currentPageNumber = 1
+                imageAdapter.clearData()
+                subscribeQuery()
+            }else{
+                Toast.makeText(requireContext(),getString(R.string.empty_text_warning),Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
