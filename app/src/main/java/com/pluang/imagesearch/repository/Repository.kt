@@ -104,8 +104,6 @@ class Repository @Inject constructor(
 
     private fun saveImage(bitmap: Bitmap, fileName: String) {
         val imageFile = File(context.filesDir, "$fileName$IMAGE_EXTENSION")
-        val savedImagePath = imageFile.absolutePath
-        Log.i("saveImage", savedImagePath)
         try {
             val outputStream: OutputStream = FileOutputStream(imageFile)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
