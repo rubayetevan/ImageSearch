@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController)
     }
 
+
     override fun onResume() {
         super.onResume()
         val connectivityManager = getSystemService(ConnectivityManager::class.java)
