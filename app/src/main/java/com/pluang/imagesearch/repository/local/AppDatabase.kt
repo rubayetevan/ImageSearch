@@ -6,5 +6,5 @@ import com.pluang.imagesearch.models.Result
 
 @Database(entities = [Result::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun imageDao(): ResultDao
+    abstract fun resultDao(): ResultDao
 }
