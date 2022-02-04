@@ -85,16 +85,22 @@ class Repository @Inject constructor(
     }
 
     private suspend fun downloadImage(imageURL: String, id: String) {
+        val imageFile = File(context.filesDir, "$id$IMAGE_EXTENSION")
+        if (imageFile.exists()) {
+            return
+        }
         withContext(externalScope.coroutineContext) {
+
             Glide.with(context)
                 .load(imageURL)
                 .into(object : CustomTarget<Drawable?>() {
                     override fun onResourceReady(resource: Drawable, @Nullable transition: Transition<in Drawable?>?) {
                         val bitmap = (resource as BitmapDrawable).bitmap
                         CoroutineScope(externalScope.coroutineContext).launch {
-                            saveImage(bitmap, id)
+                            saveImage(bitmap, imageFile)
                         }
                     }
+
                     override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
 
                 })
@@ -102,8 +108,8 @@ class Repository @Inject constructor(
         }
     }
 
-    private fun saveImage(bitmap: Bitmap, fileName: String) {
-        val imageFile = File(context.filesDir, "$fileName$IMAGE_EXTENSION")
+    private fun saveImage(bitmap: Bitmap, imageFile: File) {
+
         try {
             val outputStream: OutputStream = FileOutputStream(imageFile)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
