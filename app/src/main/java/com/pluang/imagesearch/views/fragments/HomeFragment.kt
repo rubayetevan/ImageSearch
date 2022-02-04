@@ -1,5 +1,9 @@
 package com.pluang.imagesearch.views.fragments
 
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,9 +33,40 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
     private val imageViewModel: ImageViewModel by activityViewModels<ImageViewModel>()
     private lateinit var imageAdapter: ImageAdapter
+
+    private val networkRequest = NetworkRequest.Builder()
+        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+        .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+        .build()
+
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        // network is available for use
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+        }
+
+        // Network capabilities have changed for the network
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: NetworkCapabilities
+        ) {
+            super.onCapabilitiesChanged(network, networkCapabilities)
+            val hasCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+            val hasWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            imageViewModel.hasInternet = hasCellular || hasWifi
+
+        }
+
+        // lost network connection
+        override fun onLost(network: Network) {
+            super.onLost(network)
+            imageViewModel.hasInternet = false
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,10 +92,9 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.button.setOnClickListener {
-            Log.d("handleUiState", "binding.button.setOnClickListener-> ${imageViewModel.queryText}")
-        }
 
+        val connectivityManager = requireContext().getSystemService(ConnectivityManager::class.java)
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
 
         binding.imageRV.apply {
             val gridLayoutManager = GridLayoutManager(context, imageAdapter.gridSize)
@@ -94,14 +128,14 @@ class HomeFragment : Fragment() {
         subscribeQuery()
 
         binding.button.setOnClickListener {
-            if(Validators.validateSearchQuery(imageViewModel.queryText)) {
+            if (Validators.validateSearchQuery(imageViewModel.queryText)) {
                 imageViewModel.totalPages = 0
                 imageViewModel.isLoading = false
                 imageViewModel.currentPageNumber = 1
                 imageAdapter.clearData()
                 subscribeQuery()
-            }else{
-                Toast.makeText(requireContext(),getString(R.string.empty_text_warning),Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.empty_text_warning), Toast.LENGTH_SHORT).show()
             }
         }
     }
